@@ -12,7 +12,7 @@ Apple 공식 MusicKit on the Web을 통해 Music User Token을 받습니다.
 
 사용자가 Apple Music 앱에서 플레이리스트를 직접 만들어도 곡 자동 추가의 인증 조건은 바뀌지 않습니다. 기존 플레이리스트에 곡을 추가하는 공식 API도 developer token과 Music User Token을 모두 요구합니다.
 
-```powershell
+```sh
 node src/cli.js apple-auth --backend official
 ```
 
@@ -20,19 +20,19 @@ node src/cli.js apple-auth --backend official
 
 먼저 dry-run으로 확인합니다.
 
-```powershell
+```sh
 node src/cli.js apply --dry-run --backend official --limit 2 --name "Melon Likes Import"
 ```
 
 dry-run은 로컬 결과와 checkpoint만 읽는 계획이며 출력의 `remote_checked`는 `false`입니다. 계정을 변경하지 않고 현재 session, storefront, playlist/checkpoint, catalog `playParams`를 확인하려면 다음 읽기 전용 검사를 실행합니다.
 
-```powershell
+```sh
 node src/cli.js apply --check --backend official --limit 2
 ```
 
 검토가 끝났을 때만 실제 적용합니다.
 
-```powershell
+```sh
 node src/cli.js apply --execute --backend official --limit 2 --name "Melon Likes Import"
 ```
 
@@ -42,7 +42,7 @@ node src/cli.js apply --execute --backend official --limit 2 --name "Melon Likes
 
 Apple Developer Program에 가입하지 않은 개인 사용자는 Apple Music 웹 플레이어가 쓰는 `amp-api.music.apple.com` backend를 명시적으로 선택할 수 있습니다. 이 경로는 Apple이 외부 앱용 계약이나 안정성을 보장한 API가 아니며 웹 bundle·header·cookie 정책이 바뀌면 깨질 수 있습니다.
 
-```powershell
+```sh
 node src/cli.js apple-auth --backend web-player
 node src/cli.js apply --dry-run --backend web-player --limit 2 --name "Melon Likes Import"
 
@@ -57,7 +57,7 @@ node src/cli.js apply --execute --backend web-player --limit 2 --name "Melon Lik
 
 `apply --max-add N`은 **이번 실행에서 새로 추가할 고유 Apple ID 수**를 최대 N개로 제한합니다. N은 양의 안전한 정수여야 하며, 생략하면 기존의 제한 없는 신규 추가 동작을 유지합니다. `--limit`과 함께 지정하면 먼저 누적 대상 범위를 정하고 그 범위 안에서 신규 추가 수를 제한합니다. 자동 매칭 뒤 수동 확인 결과를 이은 입력 순서를 유지하고 Apple ID 중복을 제거합니다.
 
-```powershell
+```sh
 # 로컬 checkpoint에서 이미 적용한 곡을 제외하고 신규 최대 2곡을 계획
 node src/cli.js apply --dry-run --backend web-player --max-add 2
 
@@ -96,7 +96,7 @@ check와 execute는 전체 checkpoint의 반영 여부, backend/storefront, play
 
 Apple의 플레이리스트 곡 추가 요청은 카탈로그 ID를 `type: "songs"`로 직접 받을 수 있으므로, 먼저 `/v1/me/library`에 Library Song으로 추가할 필요가 없습니다. 다만 Apple Music 계정의 **플레이리스트에 추가할 때 보관함에 노래 추가** 설정이 켜져 있으면 서버가 곡을 보관함에도 추가할 수 있고, API 요청마다 이를 끄는 별도 플래그는 확인되지 않았습니다.
 
-보관함 추가를 원하지 않으면 Apple Music의 해당 설정을 끈 뒤 1~2곡으로 먼저 확인해야 합니다. 실제 계정에서 설정을 켠 채 2곡으로 시험했을 때 곡이 플레이리스트와 보관함에 함께 들어가고 Favorite는 바뀌지 않았습니다. 플레이리스트 자체는 Library Playlist로 생성되지만 이 도구가 개별 곡을 Library Song endpoint로 먼저 추가하지는 않습니다.
+보관함 추가를 원하지 않으면 Apple Music의 해당 설정을 끈 뒤 1~2곡으로 먼저 확인해야 합니다. 설정 위치는 Windows용 Apple Music 앱은 `설정 > 고급`, Mac의 음악 앱은 `음악 > 설정 > 고급`입니다. 실제 계정에서 설정을 켠 채 2곡으로 시험했을 때 곡이 플레이리스트와 보관함에 함께 들어가고 Favorite는 바뀌지 않았습니다. 플레이리스트 자체는 Library Playlist로 생성되지만 이 도구가 개별 곡을 Library Song endpoint로 먼저 추가하지는 않습니다.
 
 ## Apple 적용 실행 잠금
 

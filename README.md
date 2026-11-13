@@ -1,6 +1,6 @@
 # Melon Likes → Apple Music
 
-멜론에서 **좋아요한 곡**을 Apple Music 플레이리스트로 옮기는 Windows용 명령줄 도구입니다.
+멜론에서 **좋아요한 곡**을 Apple Music 플레이리스트로 옮기는 명령줄 도구입니다. Windows와 macOS에서 쓸 수 있습니다.
 
 - **새 플레이리스트 하나에만 추가합니다.** 기존 플레이리스트나 Apple Music의 좋아요(Favorite)는 건드리지 않습니다.
 - **확인하기 전에는 아무것도 바꾸지 않습니다.** 먼저 무엇을 추가할지 보여 주고, 안내된 명령을 실행해야만 실제로 추가합니다.
@@ -8,7 +8,7 @@
 
 ## 준비물
 
-- Windows 11
+- Windows 11 또는 macOS
 - [Node.js](https://nodejs.org/) 20 이상
 - Google Chrome 또는 Microsoft Edge
 - 멜론 계정, Apple Music 구독 계정
@@ -22,29 +22,31 @@ Apple Music에 곡을 넣는 방식은 두 가지 중 하나를 고릅니다. �
 
 ## 설치
 
-```powershell
+```sh
 git clone https://github.com/sjyoon4755/melon-to-apple-music.git
 cd melon-to-apple-music
 npm install
 ```
 
+이 문서의 명령은 Windows의 PowerShell과 macOS의 터미널 앱에서 똑같이 입력합니다.
+
 ## 처음 옮기기
 
 **1. (선택) 브라우저 고르기.** 기본은 Chrome입니다. Edge를 쓰려면 한 번만 실행합니다.
 
-```powershell
+```sh
 node src/cli.js configure --browser edge
 ```
 
 **2. Apple Music 로그인.** 이 도구 전용 브라우저 창이 열리면 Apple ID로 직접 로그인합니다. 평소 쓰는 브라우저의 로그인 정보는 쓰지 않습니다.
 
-```powershell
+```sh
 node src/cli.js apple-auth --backend web-player
 ```
 
 **3. 미리보기.** 멜론 좋아요 목록을 가져와 Apple Music 곡을 찾고, 추가할 곡 목록을 보여 줍니다. 이 단계에서는 Apple Music이 바뀌지 않습니다.
 
-```powershell
+```sh
 node src/cli.js sync --backend web-player
 ```
 
@@ -53,7 +55,7 @@ node src/cli.js sync --backend web-player
 
 **4. 추가.** 3단계 출력의 마지막 줄에 나온 명령을 그대로 실행합니다. `Melon Likes Import`라는 새 플레이리스트가 만들어지고 자동으로 확정된 곡이 들어갑니다.
 
-```powershell
+```sh
 node src/cli.js sync --backend web-player --execute --expected-preview HASH
 ```
 
@@ -67,9 +69,9 @@ node src/cli.js sync --backend web-player --execute --expected-preview HASH
 2. **결정 파일 내려받기**를 누릅니다.
 3. 미리보기를 확인한 뒤, 마지막 줄에 안내된 명령으로 저장합니다. 저장만 하며 Apple Music은 바뀌지 않습니다.
 
-```powershell
-node src/cli.js resolve --decisions-file "$HOME\Downloads\review-decisions.json"
-node src/cli.js resolve --decisions-file "$HOME\Downloads\review-decisions.json" --confirm --expected-preview HASH
+```sh
+node src/cli.js resolve --decisions-file "$HOME/Downloads/review-decisions.json"
+node src/cli.js resolve --decisions-file "$HOME/Downloads/review-decisions.json" --confirm --expected-preview HASH
 ```
 
 자세한 규칙은 [결정 파일로 한 번에 수동 승인](docs/usage-melon-and-matching.md#결정-파일로-한-번에-수동-승인)을 참고하세요.
@@ -99,7 +101,7 @@ node src/cli.js resolve --decisions-file "$HOME\Downloads\review-decisions.json"
 
 `sync` 대신 단계별로 실행할 수도 있습니다.
 
-```powershell
+```sh
 node src/cli.js melon-extract   # 멜론 좋아요 추출
 node src/cli.js match           # Apple Music 곡 찾기
 node src/cli.js review          # 검토표(review.csv, review.html) 만들기
@@ -125,7 +127,7 @@ node src/cli.js apply --check --backend web-player    # 추가할 곡 확인(읽
 
 ## 개발
 
-```powershell
+```sh
 npm test
 ```
 

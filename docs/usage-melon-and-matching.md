@@ -77,7 +77,7 @@ ID/PW는 프로그램이 받지 않습니다. Melon은 전용 프로필과 `--re
 
 `not_found`/`ambiguous` 곡은 첫 명령에서 한국 iTunes lookup 결과를 미리 보고, 같은 명령에 `--confirm`을 추가했을 때만 자동 결과와 분리된 `data/manual_matches.json`에 저장할 수 있습니다.
 
-```powershell
+```sh
 # 미리보기: 파일을 변경하지 않음
 node src/cli.js resolve --melon-song-id MELON_ID --apple-url "https://music.apple.com/kr/album/...?...i=APPLE_ID"
 
@@ -93,12 +93,12 @@ node src/cli.js resolve --melon-song-id MELON_ID --apple-song-id APPLE_ID --conf
 
 `review.html`의 미확정(`ambiguous`/`not_found`) 곡 카드에서 고른 결과를 `review-decisions.json`으로 내려받아 한 번에 승인합니다. 저장되는 기록은 곡별 `resolve --confirm`과 같은 검사를 거친 `manual_confirmed` 기록입니다.
 
-```powershell
+```sh
 # 미리보기: 파일을 변경하지 않음. 곡별 저장 예정·이미 승인·제외 사유와 HASH 출력
-node src/cli.js resolve --decisions-file "$HOME\Downloads\review-decisions.json"
+node src/cli.js resolve --decisions-file "$HOME/Downloads/review-decisions.json"
 
 # 미리보기 목록을 확인한 뒤 저장
-node src/cli.js resolve --decisions-file "$HOME\Downloads\review-decisions.json" --confirm --expected-preview HASH
+node src/cli.js resolve --decisions-file "$HOME/Downloads/review-decisions.json" --confirm --expected-preview HASH
 ```
 
 - 선택 방법은 세 가지입니다. 후보 직접 선택(`candidate`), Apple Music 링크 붙여 넣기(`url`), 한꺼번에 고르기(`bulk_top1`)이며 건너뛴 곡은 파일에 들어가지 않습니다. 기본 보기는 결정할 곡 전체이고, **결정할 곡 중 아직 안 고른 곡** 보기로 남은 곡만 볼 수 있습니다.
@@ -116,7 +116,7 @@ node src/cli.js resolve --decisions-file "$HOME\Downloads\review-decisions.json"
 
 비활성 원곡의 Apple 대응은 `resolve-unavailable`로 별도 승인합니다. 정상 원곡은 기존 `resolve`를 사용하세요. 첫 명령은 한국 lookup과 로컬 중복을 확인한 미리보기이며 저장하지 않습니다. 원곡·후보·사유·전체 로컬 snapshot이 같을 때만 HASH로 승인할 수 있습니다.
 
-```powershell
+```sh
 node src/cli.js resolve-unavailable --melon-song-id MELON_ID --apple-song-id APPLE_ID --reason "검토한 근거와 수락한 한계"
 node src/cli.js resolve-unavailable --melon-song-id MELON_ID --apple-song-id APPLE_ID --reason "검토한 근거와 수락한 한계" --confirm --expected-preview HASH
 node src/cli.js review
@@ -128,7 +128,7 @@ node src/cli.js review
 
 원본 행에 제목·가수·앨범이 없으면 `--evidence-file PATH`가 필요합니다. 공개 근거 파일의 정확한 원곡/Apple ID·현재 원본 해시·메타데이터·출처를 검증하고, 미리보기에 추출 원본과 공개 정보를 나눠 표시합니다. 승인 HASH는 실제 파일 바이트와 근거 snapshot에도 묶이며, 승인 저장 시 공개 근거 전체와 출처·확인 시각·해시를 이력에 포함합니다. 원본 비활성 행은 그대로 유지합니다. 기존에 제목·가수·앨범이 있는 승인 이력은 그대로 읽습니다.
 
-```powershell
+```sh
 node src/cli.js resolve-unavailable --melon-song-id MELON_ID --apple-song-id APPLE_ID --reason "검토 사유" --evidence-file PATH
 # 위 미리보기와 한계를 승인한 경우에만 동일 옵션에 추가:
 # --confirm --expected-preview HASH
@@ -136,7 +136,7 @@ node src/cli.js resolve-unavailable --melon-song-id MELON_ID --apple-song-id APP
 
 근거 JSON의 정확한 schema와 변경 감지 규칙은 `src/unavailable-evidence.js`와 `test/unavailable-evidence.test.js`를 참고하세요. 근거 파일을 읽는 명령 자체가 공개 웹페이지나 계정 재생을 새로 검증하는 것은 아닙니다.
 
-```powershell
+```sh
 # 보류 미리보기: 기존 파일이나 계정을 변경하지 않음
 node src/cli.js revise --melon-song-id MELON_ID --hold --reason "참여 가수 추가 확인 필요"
 
@@ -161,7 +161,7 @@ node src/cli.js revise --melon-song-id MELON_ID --hold --reason "참여 가수 �
 
 `link-existing`은 미결 원곡을 이미 확정·이관된 다른 정상 원곡의 Apple ID에 연결합니다. 정상 미결(`ambiguous`/`not_found`)과 공개 근거가 있는 미결 비활성 원곡을 지원합니다. `linked_existing`은 해결된 원곡으로 집계하며 Apple 추가 대상에서는 제외합니다. `unlink-existing`은 로컬 연결을 취소합니다.
 
-```powershell
+```sh
 # 근거 JSON을 준비한 뒤 현재 KR playlist/catalog/library를 읽어 미리보기
 node src/cli.js link-existing --melon-song-id MELON_ID --anchor-melon-song-id ANCHOR_ID --apple-song-id APPLE_ID --backend web-player --evidence-file PATH --reason "원곡 대응 검토"
 
@@ -182,7 +182,7 @@ node src/cli.js unlink-existing --melon-song-id MELON_ID --reason "연결 재검
 
 `sync`는 `melon-extract` → `match` → `review` → `apply --check`를 이어서 실행하고, 승인한 경우에만 `apply --execute`와 사후 `apply --check`를 수행합니다. `--backend official|web-player`는 생략할 수 없습니다.
 
-```powershell
+```sh
 node src/cli.js sync --backend web-player
 node src/cli.js sync --backend web-player --execute --expected-preview HASH
 ```

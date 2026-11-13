@@ -109,7 +109,7 @@ Content-Type: application/json
 
 `SongMirror`에는 `Media-User-Token` 표기가 있지만 Apple 공식 Music User Token 헤더와 다른 구현들의 실제 요청에 맞춰 이 프로젝트는 `Music-User-Token`으로 통일한다.
 
-Windows 11의 선택한 Chrome 또는 Edge에서는 다음 흐름을 사용한다.
+Windows 11 또는 macOS의 선택한 Chrome 또는 Edge에서는 다음 흐름을 사용한다.
 
 1. 평소 브라우저 프로필이 아닌, 공통 설정에서 해석한 Apple Music 전용 persistent profile을 연다.
 2. 사용자가 Apple ID 로그인과 2FA를 직접 완료한다. 프로그램은 비밀번호나 2FA 값을 읽거나 입력하지 않는다.
@@ -141,7 +141,7 @@ POST /v1/me/library/playlists/{playlistId}/tracks
 
 `type: "songs"`인 catalog song을 플레이리스트에 직접 넣을 수 있으므로 먼저 `/v1/me/library`에 추가할 필요가 없다. `library-songs`도 허용되지만 이 프로젝트에서는 사용하지 않는다. 플레이리스트 자체는 Library Playlist로 만들어진다.
 
-개별 곡이 Library Song에도 추가되는지는 계정 설정의 영향을 받는다. Windows용 Apple Music에서 `설정 > 고급 > 플레이리스트에 추가할 때 보관함에 노래 추가`를 끌 수 있다: [Create, edit, and delete playlists in Apple Music on Windows](https://support.apple.com/guide/music-windows/create-edit-and-delete-playlists-musd5d051981/windows). 요청별 강제 플래그는 확인되지 않으므로 전체 적용 전에 `apply --execute --backend web-player --limit 2`처럼 적용 상한을 두고 1~2곡으로 실제 계정 동작을 검증한다. `--limit`은 matched 순서의 처음 N곡에 대한 누적 상한이다. 실제 계정에서 이 설정을 켠 채 시험했을 때 곡이 플레이리스트와 보관함에 함께 추가되었고 Favorite는 바뀌지 않았다.
+개별 곡이 Library Song에도 추가되는지는 계정 설정의 영향을 받는다. Windows용 Apple Music에서 `설정 > 고급 > 플레이리스트에 추가할 때 보관함에 노래 추가`를 끌 수 있다: [Create, edit, and delete playlists in Apple Music on Windows](https://support.apple.com/guide/music-windows/create-edit-and-delete-playlists-musd5d051981/windows). Mac의 음악 앱에서는 `음악 > 설정 > 고급`에 같은 설정이 있다: [Change Advanced settings in Music on Mac](https://support.apple.com/guide/music/advanced-settings-mus3a4e3959/mac). 요청별 강제 플래그는 확인되지 않으므로 전체 적용 전에 `apply --execute --backend web-player --limit 2`처럼 적용 상한을 두고 1~2곡으로 실제 계정 동작을 검증한다. `--limit`은 matched 순서의 처음 N곡에 대한 누적 상한이다. 실제 계정에서 이 설정을 켠 채 시험했을 때 곡이 플레이리스트와 보관함에 함께 추가되었고 Favorite는 바뀌지 않았다.
 
 ### iTunes ID를 쓰기 전에 검증
 
