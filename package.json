@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "description": "Export Melon likes, match them in Apple Music KR, and import only high-confidence matches into a new playlist.",
+  "license": "MIT",
   "engines": {
     "node": ">=20"
   },
