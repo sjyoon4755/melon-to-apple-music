@@ -145,7 +145,7 @@ test("review offers decision controls only for unresolved songs and blocks doubt
   assert.ok(html.includes('<option value="unresolved" selected>결정할 곡 (4)</option>'));
   assert.equal((html.match(/value="__skip"/g) ?? []).length, 4);
   assert.ok(html.includes("music.apple.com/kr/search?term=" + encodeURIComponent("원곡 4 가수")));
-  assert.ok(html.includes(String.raw`--decisions-file &quot;$HOME\Downloads\review-decisions.json&quot;`));
+  assert.ok(html.includes("--decisions-file &quot;$HOME/Downloads/review-decisions.json&quot;"));
   const vm = await import("node:vm");
   const script = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].at(-1)[1];
   assert.doesNotThrow(() => new vm.Script(script));

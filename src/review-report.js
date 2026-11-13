@@ -93,7 +93,7 @@ const doubtsOf = (candidate) => [...(candidate?.components?.qualifier_mismatch ?
 // Summary lines show only what is known; the collapsed evidence table still says "정보 없음" explicitly.
 const facts = (artist, album, length) => [artist, album].filter((value) => value != null && value !== "").map(escape)
   .concat(Number.isFinite(length) && length > 0 ? [duration(length)] : []).join(" · ");
-const DECISIONS_COMMAND ='node src/cli.js resolve --decisions-file "$HOME\\Downloads\\review-decisions.json"';
+const DECISIONS_COMMAND ='node src/cli.js resolve --decisions-file "$HOME/Downloads/review-decisions.json"';
 
 // Bulk top-1 selection is offered only when the matcher itself raised no doubt about the leading candidate.
 function topPick(item) {
@@ -266,7 +266,7 @@ export function renderReviewReport(report) {
   <p>우선 검토는 저장 점수가 해당 검색 기준 이상인 미확정 곡입니다. 자동 승인 대상이라는 뜻은 아닙니다. 참여 가수·버전과 후보 간 차이를 함께 확인하세요.</p>
   <p>생성 시각: ${escape(generatedTime)} (한국 시간) · 현재 로컬 결과의 비교표입니다. 링크는 저장된 곡 페이지이며 재생 가능성을 보증하지 않습니다. 데이터가 바뀌면 비교표를 다시 생성하세요.</p></details></section>
   <section id="next-step" class="next" hidden><h2>다음 단계: 터미널에서 저장하기</h2>
-  <p>PowerShell에서 이 프로젝트 폴더로 이동해 아래 명령을 실행하세요. 먼저 미리보기가 나오고, 확인 후 안내되는 명령으로 저장합니다.</p>
+  <p>터미널(Windows는 PowerShell, macOS는 터미널 앱)에서 이 프로젝트 폴더로 이동해 아래 명령을 실행하세요. 먼저 미리보기가 나오고, 확인 후 안내되는 명령으로 저장합니다.</p>
   <div class="cmd"><code id="cmd">${escape(DECISIONS_COMMAND)}</code><button id="copy" type="button">복사</button></div>
   <p><small>브라우저가 파일 이름을 바꿨다면(예: review-decisions (1).json) 명령의 경로도 맞게 고치세요.</small></p></section>
   <div class="toolbar"><div class="row"><label for="scope">보기</label><select id="scope">${option("unresolved", `결정할 곡 (${unresolved})`)}${option("undecided", "결정할 곡 중 아직 안 고른 곡")}${option("priority", `점수 높은 미확정 곡 (${priority})`)}${option("held", `보류 (${held})`)}${option("unprocessed", `아직 검색 안 한 곡 (${unprocessed})`)}${option("linked_existing", `기존 곡에 연결 (${linked})`)}${option("all", `전체 곡 (${items.length})`)}</select>
