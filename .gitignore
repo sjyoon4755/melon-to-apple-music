@@ -1,0 +1,13 @@
+node_modules/
+.pnpm-store/
+.env
+.env.*
+!.env.example
+.state/
+data/*.json
+data/*.csv
+data/*.html
+data/*.tmp
+data/.apple-music-user-token
+*.p8
+*.log
