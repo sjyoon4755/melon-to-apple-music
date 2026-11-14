@@ -89,7 +89,7 @@ async function previewSync(config, backend, options) {
     recovery_blocked: recoveryBlocked,
     preview_hash: previewHash,
     next_command: addSongs.length && !recoveryBlocked
-      ? `node src/cli.js sync --backend ${backend}${dataDir} --execute --expected-preview ${previewHash}` : null
+      ? `melon-to-apple-music sync --backend ${backend}${dataDir} --execute --expected-preview ${previewHash}` : null
   };
 }
 
@@ -123,7 +123,7 @@ export function formatSyncReport(result) {
     return result.stage === "extract"
       ? [`Melon 추출이 완료되지 않았습니다 (stop_reason: ${result.stop_reason ?? "없음"}, 표시 ${result.total_reported ?? "?"} · 검증 ${result.verified_unique_count ?? "?"}).`,
         result.hint, "중단 원인표: docs/usage-melon-and-matching.md"].join("\n")
-      : [`미처리 원곡 ${result.unprocessed}곡이 남아 있습니다.`, result.hint, "node src/cli.js match 실행 후 다시 시도하세요."].join("\n");
+      : [`미처리 원곡 ${result.unprocessed}곡이 남아 있습니다.`, result.hint, "melon-to-apple-music match 실행 후 다시 시도하세요."].join("\n");
   }
   const review = result.needs_review;
   const out = [`Melon 새 좋아요 ${result.new_songs.length + result.new_unavailable_count}곡 (전체 ${result.source.total_reported ?? result.source.count}곡, 추출 완료)`];
@@ -133,7 +133,7 @@ export function formatSyncReport(result) {
     for (const song of review) counts[song.match_status] = (counts[song.match_status] ?? 0) + 1;
     out.push(`  수동 검토 필요 ${review.length}곡 (${Object.entries(counts).map(([status, n]) => `${status} ${n}`).join(" · ")}) — data/review.html 확인`);
     for (const song of review) out.push(`    ? ${song.title ?? "(제목 없음)"} — ${song.artist ?? "(가수 없음)"} [${song.match_status}]`);
-    out.push("  review.html에서 곡을 고르고 결정 파일을 내려받은 뒤: node src/cli.js resolve --decisions-file \"내려받은 파일 경로\"");
+    out.push("  review.html에서 곡을 고르고 결정 파일을 내려받은 뒤: melon-to-apple-music resolve --decisions-file \"내려받은 파일 경로\"");
   }
   if (result.new_unavailable_count) out.push(`  비활성(재생 불가) ${result.new_unavailable_count}곡 — 자동 추가하지 않습니다`);
   const p = result.playlist;

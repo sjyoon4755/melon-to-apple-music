@@ -10,7 +10,7 @@ const BROWSER_CHANNELS = Object.freeze({
 const SERVICES = new Set(["melon", "apple-music"]);
 
 function browserError(message) {
-  return new Error(`${message} 해결하려면 node src/cli.js configure --browser chrome 또는 node src/cli.js configure --browser edge를 실행하세요.`);
+  return new Error(`${message} 해결하려면 melon-to-apple-music configure --browser chrome 또는 melon-to-apple-music configure --browser edge를 실행하세요.`);
 }
 
 function validateBrowser(browser, label = "--browser") {
@@ -137,7 +137,7 @@ export async function launchConfiguredBrowser(config, service, launchOptions = {
     const alternative = runtime.selected === "chrome" ? "edge" : "chrome";
     const error = new Error(
       `선택한 브라우저 ${runtime.selected} (Playwright channel: ${runtime.playwright_channel})를 실행할 수 없습니다. `
-      + `설치 상태를 확인하거나 node src/cli.js configure --browser ${alternative}로 명시적으로 변경하세요. 다른 브라우저로 자동 전환하지 않았습니다.`,
+      + `설치 상태를 확인하거나 melon-to-apple-music configure --browser ${alternative}로 명시적으로 변경하세요. 다른 브라우저로 자동 전환하지 않았습니다.`,
       { cause }
     );
     error.code = "BROWSER_LAUNCH_FAILED";

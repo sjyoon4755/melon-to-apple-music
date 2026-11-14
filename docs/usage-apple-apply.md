@@ -10,10 +10,12 @@ Apple 공식 MusicKit on the Web을 통해 Music User Token을 받습니다.
 
 이 단계는 Apple Developer Program 회원 자격과 developer token이 필요합니다. Apple Music 구독만으로는 실행할 수 없습니다. 로컬 매칭 결과 생성에는 이 단계가 필요하지 않습니다.
 
+developer token 설정(`APPLE_MUSIC_DEVELOPER_TOKEN`, 또는 `APPLE_MUSIC_TEAM_ID`·`APPLE_MUSIC_KEY_ID`·`APPLE_MUSIC_PRIVATE_KEY_PATH`)은 홈 폴더의 `.melon-to-apple-music/.env`에 둡니다.
+
 사용자가 Apple Music 앱에서 플레이리스트를 직접 만들어도 곡 자동 추가의 인증 조건은 바뀌지 않습니다. 기존 플레이리스트에 곡을 추가하는 공식 API도 developer token과 Music User Token을 모두 요구합니다.
 
 ```sh
-node src/cli.js apple-auth --backend official
+melon-to-apple-music apple-auth --backend official
 ```
 
 터미널에 표시된 `http://127.0.0.1:43117/` 주소를 브라우저에서 열고 로그인·접근 허용을 직접 수행하세요. 토큰은 `data/.apple-music-user-token`에만 저장되고 출력되지 않습니다.
@@ -21,19 +23,19 @@ node src/cli.js apple-auth --backend official
 먼저 dry-run으로 확인합니다.
 
 ```sh
-node src/cli.js apply --dry-run --backend official --limit 2 --name "Melon Likes Import"
+melon-to-apple-music apply --dry-run --backend official --limit 2 --name "Melon Likes Import"
 ```
 
 dry-run은 로컬 결과와 checkpoint만 읽는 계획이며 출력의 `remote_checked`는 `false`입니다. 계정을 변경하지 않고 현재 session, storefront, playlist/checkpoint, catalog `playParams`를 확인하려면 다음 읽기 전용 검사를 실행합니다.
 
 ```sh
-node src/cli.js apply --check --backend official --limit 2
+melon-to-apple-music apply --check --backend official --limit 2
 ```
 
 검토가 끝났을 때만 실제 적용합니다.
 
 ```sh
-node src/cli.js apply --execute --backend official --limit 2 --name "Melon Likes Import"
+melon-to-apple-music apply --execute --backend official --limit 2 --name "Melon Likes Import"
 ```
 
 첫 실제 실행은 새 비공개 Library Playlist를 만들고 그 ID를 `data/apple_import_state.json`에 기록합니다. 재실행은 **이 도구가 기록해 둔 바로 그 플레이리스트**에만 아직 추가하지 않은 곡을 이어서 추가합니다. 상태 파일이 없으면 기존 플레이리스트를 이름으로 찾아 재사용하지 않고 새로 만듭니다.
@@ -43,14 +45,14 @@ node src/cli.js apply --execute --backend official --limit 2 --name "Melon Likes
 Apple Developer Program에 가입하지 않은 개인 사용자는 Apple Music 웹 플레이어가 쓰는 `amp-api.music.apple.com` backend를 명시적으로 선택할 수 있습니다. 이 경로는 Apple이 외부 앱용 계약이나 안정성을 보장한 API가 아니며 웹 bundle·header·cookie 정책이 바뀌면 깨질 수 있습니다.
 
 ```sh
-node src/cli.js apple-auth --backend web-player
-node src/cli.js apply --dry-run --backend web-player --limit 2 --name "Melon Likes Import"
+melon-to-apple-music apple-auth --backend web-player
+melon-to-apple-music apply --dry-run --backend web-player --limit 2 --name "Melon Likes Import"
 
 # session/catalog/playlist를 읽기만 하는 원격 검사
-node src/cli.js apply --check --backend web-player --limit 2
+melon-to-apple-music apply --check --backend web-player --limit 2
 
 # 검토와 별도 승인, 보관함 설정 확인이 끝난 뒤 첫 시험에만 실행
-node src/cli.js apply --execute --backend web-player --limit 2 --name "Melon Likes Import"
+melon-to-apple-music apply --execute --backend web-player --limit 2 --name "Melon Likes Import"
 ```
 
 `apply --limit N`은 자동 매칭 뒤 수동 확인 결과를 이은 적용 목록의 처음 N개 고유 곡만 누적 적용 대상으로 제한합니다. 첫 1~2곡의 플레이리스트 반영과 Library Song 부작용을 확인한 뒤에만 `--limit`을 늘리거나 제거하세요. `web-player`는 환경 변수로 기본 선택할 수 없으며, 매번 `--backend web-player`를 적어야 합니다.
@@ -59,16 +61,16 @@ node src/cli.js apply --execute --backend web-player --limit 2 --name "Melon Lik
 
 ```sh
 # 로컬 checkpoint에서 이미 적용한 곡을 제외하고 신규 최대 2곡을 계획
-node src/cli.js apply --dry-run --backend web-player --max-add 2
+melon-to-apple-music apply --dry-run --backend web-player --max-add 2
 
 # 실제 플레이리스트와 대조하는 읽기 전용 검사
-node src/cli.js apply --check --backend web-player --max-add 2
+melon-to-apple-music apply --check --backend web-player --max-add 2
 
 # 누적 대상 처음 100개 고유 곡 범위에서 이번 실행 신규 최대 2곡
-node src/cli.js apply --check --backend web-player --limit 100 --max-add 2
+melon-to-apple-music apply --check --backend web-player --limit 100 --max-add 2
 
 # 실제 계정 쓰기 명령: 사용자가 별도로 실행을 승인한 경우에만 사용
-node src/cli.js apply --execute --backend web-player --max-add 2
+melon-to-apple-music apply --execute --backend web-player --max-add 2
 ```
 
 예를 들어 1,616곡 중 처음 16곡이 checkpoint에 있으면 `--limit 2`는 이미 적용한 2곡만 대상으로 삼습니다. 반면 `--max-add 2`는 대기 목록의 다음 2곡을 선택합니다. dry-run은 `plan_basis="local_checkpoint"`, `remote_checked=false`인 로컬 계획이므로 서버에만 존재하는 곡까지 제외했다고 해석하면 안 됩니다.
@@ -81,7 +83,7 @@ check와 execute는 전체 checkpoint의 반영 여부, backend/storefront, play
 
 `apply --check`의 `playlist_diagnostics`는 선택 범위의 `server_present`와 별도로 전체 플레이리스트의 항목 수·catalog 고유 수·catalog ID 없는 항목 수·중복 ID와 빈도·예상 밖 ID·checkpoint 미기록 ID를 출력합니다. `--limit`/`--max-add`를 지정해도 전체 목록과 전체 checkpoint를 확인합니다. 예상 밖 ID는 현재 전체 선택과 checkpoint 모두에 없는 ID이며 사용자 수동 추가일 수도 있습니다. 진단만 제공하고 자동 삭제하지 않습니다. checkpoint 곡 누락은 기존처럼 자동 재추가하지 않고 중단합니다. 이 진단은 보관함 대조나 전체 이관 완료 판정이 아닙니다.
 
-`node src/cli.js COMMAND --help` 또는 `-h`는 해당 명령의 사용법을 표시합니다. `--execute`와 함께 지정해도 도움말만 출력하며 환경 파일·브라우저 설정·인증을 읽기 전에 종료합니다. 문자열 옵션의 inline 형식(`--name=검토=플레이리스트`)은 첫 `=` 이후 값을 모두 보존합니다.
+`melon-to-apple-music COMMAND --help` 또는 `-h`는 해당 명령의 사용법을 표시합니다. `--execute`와 함께 지정해도 도움말만 출력하며 환경 파일·브라우저 설정·인증을 읽기 전에 종료합니다. 문자열 옵션의 inline 형식(`--name=검토=플레이리스트`)은 첫 `=` 이후 값을 모두 보존합니다.
 
 인증 명령은 공통 브라우저 설정으로 해석된 Apple Music 전용 persistent profile만 엽니다. Apple ID 로그인과 2FA는 사용자가 직접 처리하며 프로그램은 credentials를 읽거나 대신 입력하지 않습니다. `media-user-token`은 profile cookie에서 매번 읽어 메모리에서만 사용합니다. AMPWebPlay Bearer도 Apple Music web bundle에서 자동 추출해 JWT `exp` 기준으로 메모리 cache를 갱신합니다. 이 두 web-player token은 console, import state, 결과 파일에 저장하지 않습니다. 공식 backend의 기존 MusicKit 인증 방식은 이 설정의 영향을 받지 않습니다.
 

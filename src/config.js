@@ -1,9 +1,13 @@
+import os from "node:os";
 import path from "node:path";
+
+export const defaultAppDir = path.join(os.homedir(), ".melon-to-apple-music");
 
 export function resolveConfig(options = {}) {
   const root = path.resolve(options.root ?? process.cwd());
-  const dataDir = path.resolve(root, options.dataDir ?? "data");
-  const stateDir = path.resolve(root, options.stateDir ?? ".state");
+  const appDir = options.root == null ? defaultAppDir : root;
+  const dataDir = options.dataDir ? path.resolve(root, options.dataDir) : path.join(appDir, "data");
+  const stateDir = options.stateDir ? path.resolve(root, options.stateDir) : path.join(appDir, ".state");
   return {
     root,
     dataDir,

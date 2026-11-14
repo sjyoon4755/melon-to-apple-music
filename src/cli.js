@@ -1,6 +1,7 @@
 #!/usr/bin/env node
+import path from "node:path";
 import { loadDotEnv } from "./io.js";
-import { resolveConfig } from "./config.js";
+import { defaultAppDir, resolveConfig } from "./config.js";
 import { extractMelonLikes } from "./melon.js";
 import { applyPlaylist, localStatus, matchAppleMusic, resolveManualMatch, reviseMatch, reviewResults, linkExisting, unlinkExisting } from "./pipeline.js";
 import { authorizeAppleMusic } from "./apple-auth.js";
@@ -21,32 +22,32 @@ function printHelp(command = null) {
   const help = `melon-to-apple-music
 
 새 좋아요 반영(권장):
-  node src/cli.js sync --backend official|web-player                                # 추출→매칭→검토표→apply --check, 계정 변경 없음
-  node src/cli.js sync --backend official|web-player --execute --expected-preview HASH  # 미리보기에서 안내한 곡만 추가
-  node src/cli.js resolve --decisions-file PATH [--confirm --expected-preview HASH]       # review.html에서 고른 곡을 한 번에 수동 승인
+  melon-to-apple-music sync --backend official|web-player                                # 추출→매칭→검토표→apply --check, 계정 변경 없음
+  melon-to-apple-music sync --backend official|web-player --execute --expected-preview HASH  # 미리보기에서 안내한 곡만 추가
+  melon-to-apple-music resolve --decisions-file PATH [--confirm --expected-preview HASH]       # review.html에서 고른 곡을 한 번에 수동 승인
 
 단계별 명령:
-  node src/cli.js configure --browser chrome|edge
-  node src/cli.js melon-extract [--limit 20] [--force] [--headless]
-  node src/cli.js match [--threshold 0.88] [--min-margin 0.06] [--force]
-  node src/cli.js review [--candidates-dir PATH]              # CSV + 후보 비교 HTML
-  node src/cli.js inactive-review --input-file PATH [--output-dir NEW_PATH] [--melon-song-id ID]
-  node src/cli.js status
-  node src/cli.js recover --backend web-player (--plan-file PATH | --resume ID) [--execute --expected-preview HASH]
-  node src/cli.js settle-recovery --backend web-player --recovery-id ID --reason "부분 결과 확인 사유" [--confirm --expected-preview HASH]
-  node src/cli.js review-recovery-candidate --backend web-player --plan-file PATH
-  node src/cli.js recover-followup --backend web-player (--plan-file PATH | --resume ID) [--execute --expected-preview HASH]
-  node src/cli.js resolve --melon-song-id ID (--apple-song-id ID | --apple-url URL) [--confirm]
-  node src/cli.js resolve-unavailable --melon-song-id ID (--apple-song-id ID | --apple-url URL) --reason "검토 사유" [--evidence-file PATH] [--confirm --expected-preview HASH]
-  node src/cli.js link-existing --melon-song-id ID --anchor-melon-song-id ID --apple-song-id ID --backend official|web-player --evidence-file PATH --reason "연결 사유" [--confirm --expected-preview HASH]
-  node src/cli.js unlink-existing --melon-song-id ID --reason "취소 사유" [--confirm --expected-preview HASH]
-  node src/cli.js revise --melon-song-id ID (--hold | --apple-song-id ID | --apple-url URL) --reason "검토 사유" [--confirm --expected-preview HASH]
-  node src/cli.js apple-auth [--backend official] [--port 43117]
-  node src/cli.js apple-auth --backend web-player [--timeout 600]
-  node src/cli.js apply [--dry-run] [--backend official|web-player] [--limit 2] [--max-add 2] [--name "Melon Likes Import"]
-  node src/cli.js apply --check --backend official|web-player [--limit 2] [--max-add 2]
-  node src/cli.js apply --execute --backend official|web-player [--limit 2] [--max-add 2] [--name "Melon Likes Import"]
-  node src/cli.js mvp [--limit 20]                            # extract + match only
+  melon-to-apple-music configure --browser chrome|edge
+  melon-to-apple-music melon-extract [--limit 20] [--force] [--headless]
+  melon-to-apple-music match [--threshold 0.88] [--min-margin 0.06] [--force]
+  melon-to-apple-music review [--candidates-dir PATH]              # CSV + 후보 비교 HTML
+  melon-to-apple-music inactive-review --input-file PATH [--output-dir NEW_PATH] [--melon-song-id ID]
+  melon-to-apple-music status
+  melon-to-apple-music recover --backend web-player (--plan-file PATH | --resume ID) [--execute --expected-preview HASH]
+  melon-to-apple-music settle-recovery --backend web-player --recovery-id ID --reason "부분 결과 확인 사유" [--confirm --expected-preview HASH]
+  melon-to-apple-music review-recovery-candidate --backend web-player --plan-file PATH
+  melon-to-apple-music recover-followup --backend web-player (--plan-file PATH | --resume ID) [--execute --expected-preview HASH]
+  melon-to-apple-music resolve --melon-song-id ID (--apple-song-id ID | --apple-url URL) [--confirm]
+  melon-to-apple-music resolve-unavailable --melon-song-id ID (--apple-song-id ID | --apple-url URL) --reason "검토 사유" [--evidence-file PATH] [--confirm --expected-preview HASH]
+  melon-to-apple-music link-existing --melon-song-id ID --anchor-melon-song-id ID --apple-song-id ID --backend official|web-player --evidence-file PATH --reason "연결 사유" [--confirm --expected-preview HASH]
+  melon-to-apple-music unlink-existing --melon-song-id ID --reason "취소 사유" [--confirm --expected-preview HASH]
+  melon-to-apple-music revise --melon-song-id ID (--hold | --apple-song-id ID | --apple-url URL) --reason "검토 사유" [--confirm --expected-preview HASH]
+  melon-to-apple-music apple-auth [--backend official] [--port 43117]
+  melon-to-apple-music apple-auth --backend web-player [--timeout 600]
+  melon-to-apple-music apply [--dry-run] [--backend official|web-player] [--limit 2] [--max-add 2] [--name "Melon Likes Import"]
+  melon-to-apple-music apply --check --backend official|web-player [--limit 2] [--max-add 2]
+  melon-to-apple-music apply --execute --backend official|web-player [--limit 2] [--max-add 2] [--name "Melon Likes Import"]
+  melon-to-apple-music mvp [--limit 20]                            # extract + match only
 
 공통 옵션:
   --data-dir PATH   결과 디렉터리(기본: data)
@@ -79,14 +80,14 @@ function printHelp(command = null) {
   함께 지정하면 --limit 범위 안에서 --max-add를 적용합니다.
   dry-run은 로컬 checkpoint 기준 계획(remote_checked=false)이며, check/execute는 실제 플레이리스트와 대조합니다.
   이 도구는 Favorite API를 호출하지 않고, 이름으로 기존 플레이리스트를 찾아 수정하지 않습니다.`;
-  console.log(command ? help.split("\n").filter((line) => !line.startsWith("  node src/cli.js ")
-    || line.startsWith(`  node src/cli.js ${command} `) || line === `  node src/cli.js ${command}`).join("\n") : help);
+  console.log(command ? help.split("\n").filter((line) => !line.startsWith("  melon-to-apple-music ")
+    || line.startsWith(`  melon-to-apple-music ${command} `) || line === `  melon-to-apple-music ${command}`).join("\n") : help);
 }
 
 async function main() {
   const { command, options } = parseArgs(process.argv.slice(2));
   if (["help", "--help", "-h"].includes(command)) { printHelp(options.helpCommand); return; }
-  await loadDotEnv();
+  await loadDotEnv(path.join(defaultAppDir, ".env"));
   const config = resolveConfig(options);
   switch (command) {
     case "configure":

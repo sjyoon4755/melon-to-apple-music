@@ -79,7 +79,7 @@ test("sync preview refreshes, matches only new songs, and changes no account or 
   assert.deepEqual(result.add_songs.map((s) => s.apple_music_song_id), ["3"]);
   assert.equal(result.playlist.track_count, 2);
   assert.match(result.preview_hash, /^[0-9a-f]{64}$/);
-  assert.equal(result.next_command, `node src/cli.js sync --backend web-player --execute --expected-preview ${result.preview_hash}`);
+  assert.equal(result.next_command, `melon-to-apple-music sync --backend web-player --execute --expected-preview ${result.preview_hash}`);
   assert.deepEqual(adapter.batches, []);
   assert.equal(adapter.createCalls, 0);
   assert.deepEqual(await readAll(config), before);
@@ -89,7 +89,7 @@ test("sync preview refreshes, matches only new songs, and changes no account or 
   assert.match(report, /Melon 새 좋아요 2곡/);
   assert.match(report, /수동 검토 필요 1곡 \(not_found 1\)/);
   assert.match(report, /\+ Song 3 — Artist/);
-  assert.match(report, /추가하려면: node src\/cli\.js sync --backend web-player --execute --expected-preview/);
+  assert.match(report, /추가하려면: melon-to-apple-music sync --backend web-player --execute --expected-preview/);
 });
 
 test("sync stops before matching when extraction is incomplete", async (t) => {

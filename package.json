@@ -1,10 +1,19 @@
 {
   "name": "melon-to-apple-music",
   "version": "0.1.0",
-  "private": true,
   "type": "module",
   "description": "Export Melon likes, match them in Apple Music KR, and import only high-confidence matches into a new playlist.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sjyoon4755/melon-to-apple-music.git"
+  },
+  "bin": {
+    "melon-to-apple-music": "src/cli.js"
+  },
+  "files": [
+    "src"
+  ],
   "engines": {
     "node": ">=20"
   },

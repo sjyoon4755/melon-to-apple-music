@@ -152,10 +152,10 @@ test("HTML has escaped evidence, no scripts, no execute controls and zero eligib
 test("CLI workflow supports local review and denies approval/execute options", async t => {
   const f = await fixture(t), cli = fileURLToPath(new URL("../src/cli.js", import.meta.url));
   const args = [cli, "inactive-review", "--input-file", f.inputFile, "--data-dir", f.config.dataDir];
-  const result = JSON.parse(execFileSync(process.execPath, args, { cwd: f.root, encoding: "utf8" }));
+  const result = JSON.parse(execFileSync(process.execPath, args, { cwd: f.root, env: { ...process.env, HOME: f.root, USERPROFILE: f.root }, encoding: "utf8" }));
   assert.equal(result.review_records, 1); assert.equal(result.apply_eligible, 0); assert.equal(result.output_dir, null);
   for (const flag of ["--execute", "--confirm", "--hold", "--backend"]) assert.throws(() => parseArgs(["inactive-review", flag]), /알 수 없는 옵션/);
-  assert.throws(() => execFileSync(process.execPath, [cli, "inactive-review"], { cwd: f.root, encoding: "utf8", stdio: "pipe" }), /input-file/);
-  const help = execFileSync(process.execPath, [cli, "inactive-review", "--help"], { cwd: f.root, encoding: "utf8" });
+  assert.throws(() => execFileSync(process.execPath, [cli, "inactive-review"], { cwd: f.root, env: { ...process.env, HOME: f.root, USERPROFILE: f.root }, encoding: "utf8", stdio: "pipe" }), /input-file/);
+  const help = execFileSync(process.execPath, [cli, "inactive-review", "--help"], { cwd: f.root, env: { ...process.env, HOME: f.root, USERPROFILE: f.root }, encoding: "utf8" });
   assert(help.includes("inactive-review --input-file"));
 });
