@@ -93,7 +93,7 @@ const doubtsOf = (candidate) => [...(candidate?.components?.qualifier_mismatch ?
 // Summary lines show only what is known; the collapsed evidence table still says "정보 없음" explicitly.
 const facts = (artist, album, length) => [artist, album].filter((value) => value != null && value !== "").map(escape)
   .concat(Number.isFinite(length) && length > 0 ? [duration(length)] : []).join(" · ");
-const DECISIONS_COMMAND ='node src/cli.js resolve --decisions-file "$HOME/Downloads/review-decisions.json"';
+const DECISIONS_COMMAND ='melon-to-apple-music resolve --decisions-file "$HOME/Downloads/review-decisions.json"';
 
 // Bulk top-1 selection is offered only when the matcher itself raised no doubt about the leading candidate.
 function topPick(item) {

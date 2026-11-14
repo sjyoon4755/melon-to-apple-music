@@ -107,7 +107,7 @@ export async function resolveDecisions(config, options = {}) {
     const dataDir = options.dataDir ? ` --data-dir "${options.dataDir}"` : "";
     return summary(document, result, { mode: "preview", saved: false, decisions_file: file,
       next_command: result.accepted.length
-        ? `node src/cli.js resolve --decisions-file "${file}"${dataDir} --confirm --expected-preview ${result.previewHash}` : null });
+        ? `melon-to-apple-music resolve --decisions-file "${file}"${dataDir} --confirm --expected-preview ${result.previewHash}` : null });
   }
   const saved = await withDataLocks(config, async (assertOwned) => {
     const result = await plan(config, document, options);
@@ -141,6 +141,6 @@ export function formatDecisionsReport(result) {
   if (result.mode === "preview") {
     out.push(result.next_command ? `위 목록을 확인했다면 저장: ${result.next_command}` : "저장할 곡이 없습니다.");
     out.push("저장해도 Apple Music 계정은 바뀌지 않습니다. 추가는 이후 sync에서 별도로 승인합니다.");
-  } else if (result.review_updated === false) out.push("검토표 갱신에 실패했습니다. node src/cli.js review 를 실행하세요.");
+  } else if (result.review_updated === false) out.push("검토표 갱신에 실패했습니다. melon-to-apple-music review 를 실행하세요.");
   return out.join("\n");
 }

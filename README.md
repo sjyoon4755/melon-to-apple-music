@@ -23,10 +23,10 @@ Apple Music에 곡을 넣는 방식은 두 가지 중 하나를 고릅니다. �
 ## 설치
 
 ```sh
-git clone https://github.com/sjyoon4755/melon-to-apple-music.git
-cd melon-to-apple-music
-npm install
+npm install -g melon-to-apple-music
 ```
+
+새 버전이 나오면 같은 명령을 다시 실행해 업데이트합니다. 진행 상태와 고른 곡은 그대로 남습니다.
 
 이 문서의 명령은 Windows의 PowerShell과 macOS의 터미널 앱에서 똑같이 입력합니다.
 
@@ -35,19 +35,19 @@ npm install
 **1. (선택) 브라우저 고르기.** 기본은 Chrome입니다. Edge를 쓰려면 한 번만 실행합니다.
 
 ```sh
-node src/cli.js configure --browser edge
+melon-to-apple-music configure --browser edge
 ```
 
 **2. Apple Music 로그인.** 이 도구 전용 브라우저 창이 열리면 Apple ID로 직접 로그인합니다. 평소 쓰는 브라우저의 로그인 정보는 쓰지 않습니다.
 
 ```sh
-node src/cli.js apple-auth --backend web-player
+melon-to-apple-music apple-auth --backend web-player
 ```
 
 **3. 미리보기.** 멜론 좋아요 목록을 가져와 Apple Music 곡을 찾고, 추가할 곡 목록을 보여 줍니다. 이 단계에서는 Apple Music이 바뀌지 않습니다.
 
 ```sh
-node src/cli.js sync --backend web-player
+melon-to-apple-music sync --backend web-player
 ```
 
 - 처음에는 멜론 전용 창이 열립니다. 직접 로그인하면 좋아요 목록으로 이동해 이어서 진행합니다.
@@ -56,22 +56,22 @@ node src/cli.js sync --backend web-player
 **4. 추가.** 3단계 출력의 마지막 줄에 나온 명령을 그대로 실행합니다. `Melon Likes Import`라는 새 플레이리스트가 만들어지고 자동으로 확정된 곡이 들어갑니다.
 
 ```sh
-node src/cli.js sync --backend web-player --execute --expected-preview HASH
+melon-to-apple-music sync --backend web-player --execute --expected-preview HASH
 ```
 
 **5. 자동으로 못 찾은 곡 고르기.** 아래 [자동으로 못 찾은 곡 고르기](#자동으로-못-찾은-곡-고르기)대로 고른 뒤, 3·4단계를 다시 실행하면 고른 곡이 추가됩니다.
 
 ## 자동으로 못 찾은 곡 고르기
 
-1. `data/review.html`을 브라우저로 엽니다. 곡마다 같은 곡인 후보를 누르고, 목록에 없으면 **Apple Music 링크 붙여 넣기**, 옮기지 않을 곡은 **건너뛰기**를 고릅니다.
+1. `data/review.html`([저장 위치](#저장-파일) 아래)을 브라우저로 엽니다. 곡마다 같은 곡인 후보를 누르고, 목록에 없으면 **Apple Music 링크 붙여 넣기**, 옮기지 않을 곡은 **건너뛰기**를 고릅니다.
    - **비슷한 후보로 한꺼번에 고르기**를 누르면 가장 비슷한 후보를 한꺼번에 고릅니다. 비슷한 정도가 낮거나 버전·참여 가수가 다를 수 있는 곡은 제외되니 직접 골라 주세요.
    - 고르던 내용은 브라우저에 남으니 나눠서 해도 됩니다.
 2. **결정 파일 내려받기**를 누릅니다.
 3. 미리보기를 확인한 뒤, 마지막 줄에 안내된 명령으로 저장합니다. 저장만 하며 Apple Music은 바뀌지 않습니다.
 
 ```sh
-node src/cli.js resolve --decisions-file "$HOME/Downloads/review-decisions.json"
-node src/cli.js resolve --decisions-file "$HOME/Downloads/review-decisions.json" --confirm --expected-preview HASH
+melon-to-apple-music resolve --decisions-file "$HOME/Downloads/review-decisions.json"
+melon-to-apple-music resolve --decisions-file "$HOME/Downloads/review-decisions.json" --confirm --expected-preview HASH
 ```
 
 자세한 규칙은 [결정 파일로 한 번에 수동 승인](docs/usage-melon-and-matching.md#결정-파일로-한-번에-수동-승인)을 참고하세요.
@@ -88,7 +88,7 @@ node src/cli.js resolve --decisions-file "$HOME/Downloads/review-decisions.json"
 - **한국에만 있는 곡은 놓칠 수 있습니다.** 곡은 iTunes 검색(미국·일본)으로 찾은 뒤 한국 Apple Music에 있는지 확인합니다. 못 찾은 곡은 검토 화면에서 링크를 직접 붙여 넣으세요.
 - **로그인이 풀리면 다시 로그인합니다.** Apple Music 인증이 만료되면 `apple-auth`를, 멜론은 열리는 창에서 다시 로그인하면 됩니다. 아이디와 비밀번호는 이 도구가 받거나 저장하지 않습니다.
 - **멜론 화면이 바뀌면 동작하지 않을 수 있습니다.** 멜론은 좋아요 목록용 공개 API가 없어 웹 화면을 읽습니다.
-- **내 데이터는 내 컴퓨터에만 남습니다.** 결과는 `data/`, 전용 브라우저 로그인 정보는 `.state/`에 저장되며 Git에 올라가지 않습니다.
+- **내 데이터는 내 컴퓨터에만 남습니다.** 결과와 전용 브라우저 로그인 정보는 [저장 위치](#저장-파일)에만 저장됩니다.
 
 ## 더 자세한 사용법
 
@@ -102,16 +102,23 @@ node src/cli.js resolve --decisions-file "$HOME/Downloads/review-decisions.json"
 `sync` 대신 단계별로 실행할 수도 있습니다.
 
 ```sh
-node src/cli.js melon-extract   # 멜론 좋아요 추출
-node src/cli.js match           # Apple Music 곡 찾기
-node src/cli.js review          # 검토표(review.csv, review.html) 만들기
-node src/cli.js status          # 현재 진행 상황 확인
-node src/cli.js apply --check --backend web-player    # 추가할 곡 확인(읽기 전용)
+melon-to-apple-music melon-extract   # 멜론 좋아요 추출
+melon-to-apple-music match           # Apple Music 곡 찾기
+melon-to-apple-music review          # 검토표(review.csv, review.html) 만들기
+melon-to-apple-music status          # 현재 진행 상황 확인
+melon-to-apple-music apply --check --backend web-player    # 추가할 곡 확인(읽기 전용)
 ```
 
-전체 명령과 옵션은 `node src/cli.js --help`로 볼 수 있습니다.
+전체 명령과 옵션은 `melon-to-apple-music --help`로 볼 수 있습니다.
 
 ## 저장 파일
+
+모든 파일은 어느 폴더에서 실행하든 홈 폴더의 `.melon-to-apple-music` 아래에 저장됩니다.
+
+- Windows: `%USERPROFILE%\.melon-to-apple-music`
+- macOS: `~/.melon-to-apple-music`
+
+결과를 다른 곳에 두려면 명령마다 `--data-dir 경로`를 붙입니다.
 
 | 파일 | 내용 |
 | --- | --- |
@@ -125,9 +132,17 @@ node src/cli.js apply --check --backend web-player    # 추가할 곡 확인(읽
 
 보류·교체·기존 곡 연결 같은 고급 명령이 쓰는 기록 파일은 [Melon 추출·매칭 상세](docs/usage-melon-and-matching.md)에 설명되어 있습니다.
 
+## 이전 버전(git clone)에서 옮겨 오기
+
+저장소 폴더에서 `node src/cli.js`로 쓰던 경우, 저장소 폴더의 `data/`, `.state/`, `.env`(있다면)를 위 [저장 위치](#저장-파일)로 옮기면 이어서 쓸 수 있습니다.
+
 ## 개발
 
 ```sh
+git clone https://github.com/sjyoon4755/melon-to-apple-music.git
+cd melon-to-apple-music
+npm install
+npm link   # 저장소 코드로 melon-to-apple-music 명령 실행
 npm test
 ```
 
