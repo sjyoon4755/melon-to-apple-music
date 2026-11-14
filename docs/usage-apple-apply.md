@@ -10,7 +10,7 @@ Apple 공식 MusicKit on the Web을 통해 Music User Token을 받습니다.
 
 이 단계는 Apple Developer Program 회원 자격과 developer token이 필요합니다. Apple Music 구독만으로는 실행할 수 없습니다. 로컬 매칭 결과 생성에는 이 단계가 필요하지 않습니다.
 
-developer token 설정(`APPLE_MUSIC_DEVELOPER_TOKEN`, 또는 `APPLE_MUSIC_TEAM_ID`·`APPLE_MUSIC_KEY_ID`·`APPLE_MUSIC_PRIVATE_KEY_PATH`)은 홈 폴더의 `.melon-to-apple-music/.env`에 둡니다.
+developer token 설정(`APPLE_MUSIC_DEVELOPER_TOKEN`, 또는 `APPLE_MUSIC_TEAM_ID`·`APPLE_MUSIC_KEY_ID`·`APPLE_MUSIC_PRIVATE_KEY_PATH`)은 홈 폴더의 `.melon-to-apple-music/.env`에 둡니다. 저장소의 [`.env.example`](../.env.example)을 이 위치에 `.env`로 복사한 뒤 값을 채우세요.
 
 사용자가 Apple Music 앱에서 플레이리스트를 직접 만들어도 곡 자동 추가의 인증 조건은 바뀌지 않습니다. 기존 플레이리스트에 곡을 추가하는 공식 API도 developer token과 Music User Token을 모두 요구합니다.
 
